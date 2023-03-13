@@ -13,6 +13,7 @@ app.get("/", (request, response) => {
 });
 
 app.get("/users", db.getUsers);
+app.get("/users/:id", db.getUsersById);
 
 app.listen(port, () => {
   console.log(`App running on port: ${port}`);
