@@ -26,4 +26,44 @@ const getUsersById = (req, res) => {
   });
 };
 
-module.exports = { getUsers, getUsersById };
+const createUser = (req, res) => {
+  const { name, email } = req.body;
+  pool.query(
+    "INSERT INTO users (name, email) VALUES ($1, $2) RETURNING *",
+    [name, email],
+    (err, results) => {
+      if (err) {
+        throw err;
+      }
+      res.status(201).send(`User added with ID: ${results.rows[0].id}`);
+    }
+  );
+};
+
+const updateUser = (req, res) => {
+  const id = parseInt(req.params.id);
+  const { name, email } = req.body;
+  pool.query(
+    "UPDATE users SET name=$1,email=$2 WHERE id=$3",
+    [name, email, id],
+    (err, results) => {
+      if (err) {
+        throw err;
+      }
+      res.status(201).send(`User modified with ID:${id}`);
+    }
+  );
+};
+
+const deleteUser = (req, res) => {
+  const id = parseInt(req.params.id);
+
+  pool.query("DELETE FROM users WHERE id = $1", [id], (err, results) => {
+    if (err) {
+      throw err;
+    }
+    res.status(204).send(`User deleted with ID: ${id}`);
+  });
+};
+
+module.exports = { getUsers, getUsersById, createUser, updateUser, deleteUser };
